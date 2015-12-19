@@ -59,8 +59,10 @@ declare function local:random-alpha-string($length as xs:integer)  {
   return fn:substring($STRING, (xdmp:random(51) + 1), 1))
 };
 
-declare function local:random-date() {fn:current-dateTime()};
+(: Should create dates within a dateTime range of 40 years from the start of 1980 :)
+declare function local:random-date() {xs:dateTime('1980-01-01T00:00:00Z') + xs:dayTimeDuration( concat('PT', string(xdmp:random(30 * 1000 * 1000 * 40)), 'S'))};
 
+for $x in 1 to 10 return
 element example {
     element simple-id{xdmp:random()},
     element words {local:random-words(50)},
