@@ -5,6 +5,7 @@ import com.marklogic.xcc.Request;
 import com.marklogic.xcc.Session;
 import com.marklogic.xcc.exceptions.RequestException;
 import com.marklogic.xcc.exceptions.XccConfigException;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,11 +22,20 @@ import java.util.List;
  * http://download.geonames.org/export/dump/
  * <p/>
  * Download cities5000.txt and place it in your src/main/resources dir
+ *
+ * TODO - I had to open and re-save the file in Excel to stop it from having problems
+ *
+ * Should create 144891 - 144893 docs
+ *
  */
 public class CreateCityData {
 
     private static String createStringElem(String name, String value) {
-        return "<" + name + ">" + value + "</" + name + ">";
+        if (value.isEmpty()){
+            return String.format("<%s/>", name);
+        } else {
+            return String.format("<%s>%s</%s>", name, StringEscapeUtils.escapeXml11(value), name);
+        }
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(CreateCityData.class);
@@ -33,7 +43,7 @@ public class CreateCityData {
     public static void main(String[] args) {
 
         ContentSource cs = null;
-        String fileName = "src/main/resources/cities5000.txt";
+        String fileName = "src/main/resources/cities1000.txt";
         List<String[]> allRows = null;
 
         // Setup ML ContentSource
@@ -47,7 +57,7 @@ public class CreateCityData {
 
 
         try {
-            CSVReader reader = new CSVReader(new FileReader(fileName), '\t', '"', 1);
+            CSVReader reader = new CSVReader(new FileReader(fileName), '\t'); //, '\t', '"', '\\');
             //Read all rows at once
             allRows = reader.readAll();
         } catch (FileNotFoundException e) {
@@ -82,8 +92,6 @@ public class CreateCityData {
 
         for (String[] row : allRows) {
 
-
-
             StringBuilder sb = new StringBuilder();
             sb.append("<geoname>")
                     .append(createStringElem("geonameid", row[0]))
@@ -106,13 +114,14 @@ public class CreateCityData {
                     .append(createStringElem("timezone", row[17]))
                     .append(createStringElem("modificationDate", row[18]))
                     .append("</geoname>");
-
-            Request r = s.newAdhocQuery("xdmp:document-insert(\"/"+row[0]+".xml\","+sb.toString()+")");
+            LOG.info(sb.toString());
+          /*   Request r = s.newAdhocQuery("xdmp:document-insert(\"/"+row[0]+".xml\","+sb.toString()+")");
             try {
                 s.submitRequest(r);
             } catch (RequestException e) {
-                e.printStackTrace();
-            }
+                LOG.info("Exception:",e);
+                LOG.info(sb.toString());
+            } */
             //LOG.info(sb.toString());
         }
         s.close();
