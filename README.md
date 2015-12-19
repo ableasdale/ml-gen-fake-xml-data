@@ -1,6 +1,6 @@
 # ml-gen-fake-xml-data
 
-XQuery tool to allow the creation of fake XML data for fast testing.
+*fake-xml.xqy* is an XQuery tool to allow the creation of fake XML data for fast testing.
 
 This is an initial (and very early) start on a library that allows the creation of different types of random data (random dateTimes, random strings, elements containing lists of random words)
 
