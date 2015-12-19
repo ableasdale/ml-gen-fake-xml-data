@@ -1,3 +1,5 @@
+package com.marklogic.geonames;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,8 +27,8 @@ public class FixUTF8 {
 
             String s;
             while ((s = fin.readLine()) != null) {
-                s = s.replace('”','\'');
-                s = s.replace('"','\'');
+                s = s.replace('”', '\'');
+                s = s.replace('"', '\'');
                 fout.write(s);
                 fout.newLine();
             }

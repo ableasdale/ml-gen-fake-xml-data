@@ -1,3 +1,5 @@
+package com.marklogic.geonames;
+
 import com.marklogic.xcc.ContentSource;
 import com.marklogic.xcc.ContentSourceFactory;
 import com.marklogic.xcc.Session;
@@ -12,17 +14,17 @@ import org.slf4j.LoggerFactory;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-public class XccDataManager {
+public class MarkLogicXCCDataManager {
 
     private static final int Timeout = 20;
-    private static Logger LOG = LoggerFactory.getLogger(XccDataManager.class);
-    public String CLEAR_DATABASE_QUERY = "xdmp:node-delete(fn:doc());";
-    public String SEARCH_QUERY = "cts:search(collection('snapshots'), cts:element-attribute-range-query(fn:QName('', 'revision_range'), fn:QName('', 'to'), '=', xs:long(2147483647)))";
+    private static Logger LOG = LoggerFactory.getLogger(MarkLogicXCCDataManager.class);
+    //    public String CLEAR_DATABASE_QUERY = "xdmp:node-delete(fn:doc());";
+    //    public String SEARCH_QUERY = "cts:search(collection('snapshots'), cts:element-attribute-range-query(fn:QName('', 'revision_range'), fn:QName('', 'to'), '=', xs:long(2147483647)))";
     ContentSource contentSource;
     Configuration Config;
     String Database;
 
-    private XccDataManager() {
+    private MarkLogicXCCDataManager() {
         LOG.info("Creating the ContentSource for the first time");
         try {
             Config = new PropertiesConfiguration("config.properties");
@@ -38,7 +40,7 @@ public class XccDataManager {
         return contentSource;
     }*/
 
-    public static XccDataManager getInstance() {
+    public static MarkLogicXCCDataManager getInstance() {
         return LazyHolder.INSTANCE;
     }
 
@@ -52,19 +54,19 @@ public class XccDataManager {
         return s;
     }
 
-    public String createDocumentQueryWithId(long guid) {
-        return String.format("xdmp:document-insert(\"/%d.xml\", <snapshot documentId=\"%d\">  <revision_range to=\"2147483647\" /></snapshot>, xdmp:default-permissions(), ('snapshots'))", guid, guid);
-    }
-
-    public String deleteDocumentQueryWithId(long guid) {
-        return String.format("xdmp:document-delete(\"/%s.xml\")", guid);
-    }
-
-    public String lockIdForUpdate(long guid) {
-        return String.format("xdmp:lock-for-update(\"/%s.xml\")", guid);
-    }
+//    public String createDocumentQueryWithId(long guid) {
+//        return String.format("xdmp:document-insert(\"/%d.xml\", <snapshot documentId=\"%d\">  <revision_range to=\"2147483647\" /></snapshot>, xdmp:default-permissions(), ('snapshots'))", guid, guid);
+//    }
+//
+//    public String deleteDocumentQueryWithId(long guid) {
+//        return String.format("xdmp:document-delete(\"/%s.xml\")", guid);
+//    }
+//
+//    public String lockIdForUpdate(long guid) {
+//        return String.format("xdmp:lock-for-update(\"/%s.xml\")", guid);
+//    }
 
     private static class LazyHolder {
-        private static final XccDataManager INSTANCE = new XccDataManager();
+        private static final MarkLogicXCCDataManager INSTANCE = new MarkLogicXCCDataManager();
     }
 }

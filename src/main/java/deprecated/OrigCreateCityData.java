@@ -1,9 +1,9 @@
+package deprecated;
+
 import au.com.bytecode.opencsv.CSVReader;
 import com.marklogic.xcc.ContentSource;
 import com.marklogic.xcc.ContentSourceFactory;
-import com.marklogic.xcc.Request;
 import com.marklogic.xcc.Session;
-import com.marklogic.xcc.exceptions.RequestException;
 import com.marklogic.xcc.exceptions.XccConfigException;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.slf4j.Logger;
@@ -28,7 +28,7 @@ import java.util.List;
  * Should create 144891 - 144893 docs
  *
  */
-public class CreateCityData {
+public class OrigCreateCityData {
 
     private static String createStringElem(String name, String value) {
         if (value.isEmpty()){
@@ -38,7 +38,7 @@ public class CreateCityData {
         }
     }
 
-    private static final Logger LOG = LoggerFactory.getLogger(CreateCityData.class);
+    private static final Logger LOG = LoggerFactory.getLogger(OrigCreateCityData.class);
 
     public static void main(String[] args) {
 

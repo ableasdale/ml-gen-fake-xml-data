@@ -1,3 +1,5 @@
+package com.marklogic.geonames;
+
 import com.marklogic.xcc.Request;
 import com.marklogic.xcc.Session;
 import com.marklogic.xcc.exceptions.RequestException;
@@ -18,15 +20,16 @@ import java.util.List;
  * <p/>
  * Source files obtained from: http://download.geonames.org/export/dump/
  * <p/>
- * Should create 145501 Geonames XML Docs
+ * cities1000.txt should create 145,501 Geonames XML Docs
+ * <p/>
+ * allCountries.txt should create X Geonames XML Docs
  * <p/>
  * TODO - download, unzip and "modify" the file to enable easy CSV parsing...
  */
-public class CreateCityDataII {
+public class CreateGeonamesXMLData {
 
-   /* private static String createStringElem(String name, Object value) {
-        return "<" + name + ">" + value + "</" + name + ">";
-    }*/
+    private static final Logger LOG = LoggerFactory.getLogger(CreateGeonamesXMLData.class);
+    private static final String CSV_FILENAME = "src/main/resources/allCountriesb.txt";
 
     private static String createStringElem(String name, Object value) {
         if (value == null) {
@@ -35,10 +38,6 @@ public class CreateCityDataII {
             return String.format("<%s>%s</%s>", name, StringEscapeUtils.escapeXml11(value.toString()), name);
         }
     }
-
-
-    private static final Logger LOG = LoggerFactory.getLogger(CreateCityDataII.class);
-    private static final String CSV_FILENAME = "src/main/resources/cities1000b.txt";
 
     private static void readWithCsvListReader() throws Exception {
 
@@ -52,7 +51,7 @@ public class CreateCityDataII {
             //listReader.getHeader(true); // skip the header (can't be used with CsvListReader)
             final CellProcessor[] processors = new CellProcessor[]{null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null};
 
-            session = XccDataManager.getInstance().createSession();
+            session = MarkLogicXCCDataManager.getInstance().createSession();
 
             while ((customerList = listReader.read(processors)) != null) {
 
@@ -79,20 +78,13 @@ public class CreateCityDataII {
                         .append(createStringElem("modificationDate", customerList.get(18)))
                         .append("</geoname>");
 
-                Request r = session.newAdhocQuery("xdmp:document-insert(\"/" + customerList.get(0).toString() + ".xml\"," + sb.toString() + ")");
+                Request r = session.newAdhocQuery(String.format("xdmp:document-insert(\"/%s.xml\",%s)", customerList.get(0).toString(), sb.toString()));
                 try {
                     session.submitRequest(r);
                 } catch (RequestException e) {
                     LOG.error(String.format("[ %s ] Exception Caught: [ %s ]  \n", e.getClass().getName(), e.getMessage()), e);
                 }
-
-                /*System.out.println(customerList.get(0)); */
-
-                /*
-                System.out.println(String.format("lineNo=%s, rowNo=%s, customerList=%s", listReader.getLineNumber(),
-                        listReader.getRowNumber(), customerList)); */
             }
-
         } catch (Exception e) {
             LOG.error(String.format("[ %s ] Exception Caught: [ %s ]  \n", e.getClass().getName(), e.getMessage()), e);
         } finally {
