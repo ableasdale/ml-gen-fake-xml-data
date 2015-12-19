@@ -1,6 +1,12 @@
 # ml-gen-fake-xml-data
 
-XQuery tool to allow the creation of fake XML data for fast testing
+XQuery tool to allow the creation of fake XML data for fast testing.
+
+This is an initial (and very early) start on a library that allows the creation of different types of random data (random dateTimes, random strings, elements containing lists of random words)
+
+* The current checked in code contains two word lists: one containing 21877 individual words and one containing 1510 "common" words 
+* A function to generate an arbitrary dateTime within a 40-year date range (starting from 1980)
+* Generation of V4 UUIDS
 
 ## Example
 
