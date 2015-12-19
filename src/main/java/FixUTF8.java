@@ -12,8 +12,8 @@ public class FixUTF8 {
 
     public static void main(String[] args) {
 
-        String CSV_FILENAME = "src/main/resources/cities1000.txt";
-        String CSV_OUTPUT_FILENAME = "src/main/resources/cities1000b.txt";
+        String CSV_FILENAME = "src/main/resources/allCountries.txt";
+        String CSV_OUTPUT_FILENAME = "src/main/resources/allCountriesb.txt";
 
 
         try {
