@@ -1,8 +1,5 @@
 package com.marklogic.geonames;
 
-import com.marklogic.xcc.Request;
-import com.marklogic.xcc.Session;
-import com.marklogic.xcc.exceptions.RequestException;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +29,7 @@ public class CreateGeonamesXMLData {
 
     private static final int TXN_BATCH_SIZE = 2500;
     private static final Logger LOG = LoggerFactory.getLogger(CreateGeonamesXMLData.class);
+
     // TODO - hard coded!
     private static final String CSV_FILENAME = "src/main/resources/working-files/allCountriesb.txt";
 
@@ -47,8 +45,8 @@ public class CreateGeonamesXMLData {
 
         ICsvListReader listReader = null;
         List<Object> customerList;
-        Session session = null;
         StringBuilder batch = new StringBuilder();
+        int tally = 0;
 
         try {
             listReader = new CsvListReader(new FileReader(CSV_FILENAME), CsvPreference.TAB_PREFERENCE);
@@ -56,7 +54,6 @@ public class CreateGeonamesXMLData {
             final CellProcessor[] processors = new CellProcessor[]{null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null};
 
             int batchCount = 0;
-            session = MarkLogicXCCDataManager.getInstance().createSession();
 
             while ((customerList = listReader.read(processors)) != null) {
 
@@ -85,22 +82,17 @@ public class CreateGeonamesXMLData {
 
                 String query = String.format("xdmp:document-insert(\"/%s.xml\",%s)", customerList.get(0).toString(), sb.toString());
 
-                if(batchCount == 0){
+                if (batchCount == 0) {
                     batch.append(query);
                 } else {
                     batch.append(",").append(query);
                 }
                 batchCount++;
 
-                if (batchCount == TXN_BATCH_SIZE){
-                    // LOG.info("Batch ready");
-                    //System.out.println(MarkLogicXCCDataManager.wrapForXDMPSpawn(batch.toString()));
-                    Request r = session.newAdhocQuery(MarkLogicXCCDataManager.wrapForXDMPSpawn(batch.toString()));
-                    try {
-                        session.submitRequest(r);
-                    } catch (RequestException e) {
-                        LOG.error(Utils.wrapException(e), e);
-                    }
+                if (batchCount == TXN_BATCH_SIZE) {
+                    tally += TXN_BATCH_SIZE;
+                    LOG.info(String.format("Batch ready - Size: [ %d ] Last id: [ %s ] total: [ %d ]", TXN_BATCH_SIZE, customerList.get(0), tally));
+                    MarkLogicXCCDataManager.actionTask(batch.toString());
                     batchCount = 0;
                     batch = new StringBuilder();
                 }
@@ -113,14 +105,7 @@ public class CreateGeonamesXMLData {
                 listReader.close();
             }
         }
-
-        Request r = session.newAdhocQuery(MarkLogicXCCDataManager.wrapForXDMPSpawn(batch.toString()));
-        try {
-            session.submitRequest(r);
-        } catch (RequestException e) {
-            LOG.error(Utils.wrapException(e), e);
-        }
-        session.close();
+        MarkLogicXCCDataManager.actionTask(batch.toString());
     }
 
     public static void main(String[] args) throws Exception {

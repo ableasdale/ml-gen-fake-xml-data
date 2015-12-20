@@ -16,6 +16,7 @@ public class Utils {
 
     protected static final String isoDateFormat = "yyyy-MM-dd";
     protected static final String alternateDateFormat = "dd/MM/yyyy";
+
     protected static String wrapException(Exception e){
         return String.format("[ %s ] Exception Caught: [ %s ]  \n", e.getClass().getName(), e.getMessage());
     }

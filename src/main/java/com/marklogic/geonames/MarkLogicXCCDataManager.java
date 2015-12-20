@@ -2,7 +2,9 @@ package com.marklogic.geonames;
 
 import com.marklogic.xcc.ContentSource;
 import com.marklogic.xcc.ContentSourceFactory;
+import com.marklogic.xcc.Request;
 import com.marklogic.xcc.Session;
+import com.marklogic.xcc.exceptions.RequestException;
 import com.marklogic.xcc.exceptions.XccConfigException;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
@@ -76,5 +78,32 @@ public class MarkLogicXCCDataManager {
 
     private static class LazyHolder {
         private static final MarkLogicXCCDataManager INSTANCE = new MarkLogicXCCDataManager();
+    }
+
+    protected static void actionTask(String batch){
+        XccTaskThread x = new XccTaskThread(batch);
+        x.run();
+    }
+
+    /**
+     * Performs an ad-hoc Query within a call to XDMP Spawn to push the work over to the task server.
+     */
+    private static class XccTaskThread implements Runnable {
+        private String workBatch;
+
+        private XccTaskThread(String batch){
+            workBatch = batch;
+        }
+
+        @Override
+        public void run() {
+            Session s = MarkLogicXCCDataManager.getInstance().createSession();
+            Request r = s.newAdhocQuery(MarkLogicXCCDataManager.wrapForXDMPSpawn(workBatch));
+            try {
+                s.submitRequest(r);
+            } catch (RequestException e) {
+                LOG.error(Utils.wrapException(e), e);
+            }
+        }
     }
 }
