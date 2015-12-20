@@ -65,6 +65,15 @@ public class MarkLogicXCCDataManager {
 //        return String.format("xdmp:lock-for-update(\"/%s.xml\")", guid);
 //    }
 
+    // TODO - consider creating a completely separate Thread to do the adhoc query to make the load faster.
+    protected static String wrapForXDMPSpawn(String query){
+        StringBuilder sb = new StringBuilder();
+        sb.append("xdmp:spawn-function(function(){")
+                .append(query)
+                .append("}, <options xmlns=\"xdmp:eval\"><transaction-mode>update-auto-commit</transaction-mode></options>)");
+        return sb.toString();
+    }
+
     private static class LazyHolder {
         private static final MarkLogicXCCDataManager INSTANCE = new MarkLogicXCCDataManager();
     }

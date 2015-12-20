@@ -17,14 +17,14 @@ public class FixUTF8 {
     private static final Logger LOG = LoggerFactory.getLogger(FixUTF8.class);
 
     private static final String SOURCE_DATASET_BASE_URL = "http://download.geonames.org/export/dump";
-    private static final String RESOURCES_DIR = "src/main/resources";
+    private static final String RESOURCES_DIR = "src/main/resources/working-files";
     private static final String ZIP_FILE = "/AD.zip";
 
     private static final String SOURCE_DATASET_URL = SOURCE_DATASET_BASE_URL + ZIP_FILE;
     private static final String ZIP_FILE_PATH = RESOURCES_DIR + ZIP_FILE;
 
-    private static final String CSV_FILENAME = RESOURCES_DIR + "/allCountries.txt";
-    private static final String CSV_OUTPUT_FILENAME = RESOURCES_DIR + "/allCountriesb.txt";
+    private static final String CSV_FILENAME = RESOURCES_DIR + "/cities5000.txt";
+    private static final String CSV_OUTPUT_FILENAME = RESOURCES_DIR + "/cities5000b.txt";
 
 
     public static void main(String[] args) {
