@@ -15,6 +15,7 @@ import java.net.URL;
 public class FixUTF8 {
 
     private static final Logger LOG = LoggerFactory.getLogger(FixUTF8.class);
+
     private static final String SOURCE_DATASET_BASE_URL = "http://download.geonames.org/export/dump";
     private static final String RESOURCES_DIR = "src/main/resources";
     private static final String ZIP_FILE = "/AD.zip";

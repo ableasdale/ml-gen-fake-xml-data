@@ -22,7 +22,7 @@ import java.util.List;
  * <p/>
  * cities1000.txt should create 145,501 Geonames XML Docs
  * <p/>
- * allCountries.txt should create X Geonames XML Docs
+ * allCountries.txt should create 10,881,605 Geonames XML Docs
  * <p/>
  * TODO - download, unzip and "modify" the file to enable easy CSV parsing...
  */
