@@ -33,7 +33,7 @@ public class CreateGeonamesXMLData {
     private static final int TXN_BATCH_SIZE = 2500;
     private static final Logger LOG = LoggerFactory.getLogger(CreateGeonamesXMLData.class);
     // TODO - hard coded!
-    private static final String CSV_FILENAME = "src/main/resources/working-files/cities1000b.txt";
+    private static final String CSV_FILENAME = "src/main/resources/working-files/allCountriesb.txt";
 
     private static String createStringElem(String name, Object value) {
         if (value == null) {
