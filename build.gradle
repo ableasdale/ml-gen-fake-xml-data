@@ -6,7 +6,7 @@ apply plugin: 'groovy'
 apply plugin: 'java'
 apply plugin:'application'
 
-//mainClassName = 'V4'
+mainClassName = 'com.marklogic.geonames.MarkLogicXCCDataManager'
 sourceCompatibility = 1.7
 
 //applicationDefaultJvmArgs = ["-Djava.util.logging.config.file=${rootDir}/xcc.logging.properties"]
