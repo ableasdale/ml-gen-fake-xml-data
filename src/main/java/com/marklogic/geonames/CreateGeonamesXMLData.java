@@ -82,11 +82,11 @@ public class CreateGeonamesXMLData {
                 try {
                     session.submitRequest(r);
                 } catch (RequestException e) {
-                    LOG.error(String.format("[ %s ] Exception Caught: [ %s ]  \n", e.getClass().getName(), e.getMessage()), e);
+                    LOG.error(Utils.wrapException(e), e);
                 }
             }
         } catch (Exception e) {
-            LOG.error(String.format("[ %s ] Exception Caught: [ %s ]  \n", e.getClass().getName(), e.getMessage()), e);
+            LOG.error(Utils.wrapException(e), e);
         } finally {
 
             if (listReader != null) {
@@ -101,7 +101,7 @@ public class CreateGeonamesXMLData {
         try {
             readWithCsvListReader();
         } catch (SuperCsvException e) {
-            LOG.error(String.format("[ %s ] Exception Caught: [ %s ]  \n", e.getClass().getName(), e.getMessage()), e);
+            LOG.error(Utils.wrapException(e), e);
         }
     }
 }

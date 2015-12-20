@@ -3,7 +3,6 @@ package com.marklogic.geonames;
 import com.marklogic.xcc.ContentSource;
 import com.marklogic.xcc.ContentSourceFactory;
 import com.marklogic.xcc.Session;
-import com.marklogic.xcc.exceptions.RequestException;
 import com.marklogic.xcc.exceptions.XccConfigException;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
@@ -16,7 +15,7 @@ import java.net.URISyntaxException;
 
 public class MarkLogicXCCDataManager {
 
-    private static final int Timeout = 20;
+    //private static final int Timeout = 200;
     private static Logger LOG = LoggerFactory.getLogger(MarkLogicXCCDataManager.class);
     //    public String CLEAR_DATABASE_QUERY = "xdmp:node-delete(fn:doc());";
     //    public String SEARCH_QUERY = "cts:search(collection('snapshots'), cts:element-attribute-range-query(fn:QName('', 'revision_range'), fn:QName('', 'to'), '=', xs:long(2147483647)))";
@@ -32,7 +31,7 @@ public class MarkLogicXCCDataManager {
             Database = Config.getString("DATABASE");
             contentSource = ContentSourceFactory.newContentSource(new URI(xccUri));
         } catch (XccConfigException | URISyntaxException | ConfigurationException e) {
-            LOG.error(String.format("[ %s ] Exception Caught: [ %s ]  \n", e.getClass().getName(), e.getMessage()), e);
+            LOG.error(Utils.wrapException(e), e);
         }
     }
 
@@ -45,13 +44,13 @@ public class MarkLogicXCCDataManager {
     }
 
     public Session createSession() {
-        Session s = contentSource.newSession(Database);
-        try {
-            s.setTransactionTimeout(Timeout);
-        } catch (RequestException e) {
-            LOG.error(String.format("[ %s ] Exception Caught: [ %s ]  \n", e.getClass().getName(), e.getMessage()), e);
-        }
-        return s;
+
+//        try {
+//            s.setTransactionTimeout(Timeout);
+//        } catch (RequestException e) {
+//            LOG.error(String.format("[ %s ] Exception Caught: [ %s ]  \n", e.getClass().getName(), e.getMessage()), e);
+//        }
+        return contentSource.newSession(Database);
     }
 
 //    public String createDocumentQueryWithId(long guid) {
