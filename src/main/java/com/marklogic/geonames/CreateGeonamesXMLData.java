@@ -27,7 +27,7 @@ import java.util.List;
  */
 public class CreateGeonamesXMLData {
 
-    private static final int TXN_BATCH_SIZE = 2500;
+    private static final int TXN_BATCH_SIZE = 10000;
     private static final Logger LOG = LoggerFactory.getLogger(CreateGeonamesXMLData.class);
 
     // TODO - hard coded!
@@ -42,7 +42,7 @@ public class CreateGeonamesXMLData {
     }
 
     private static void readWithCsvListReader() throws Exception {
-
+        boolean startProcessing = false;
         ICsvListReader listReader = null;
         List<Object> customerList;
         StringBuilder batch = new StringBuilder();
@@ -57,45 +57,55 @@ public class CreateGeonamesXMLData {
 
             while ((customerList = listReader.read(processors)) != null) {
 
-                StringBuilder sb = new StringBuilder();
-                sb.append("<geoname>")
-                        .append(createStringElem("geonameid", customerList.get(0)))
-                        .append(createStringElem("name", customerList.get(1)))
-                        .append(createStringElem("asciiname", customerList.get(2)))
-                        .append(createStringElem("alternatenames", customerList.get(3)))
-                        .append(createStringElem("latitude", customerList.get(4)))
-                        .append(createStringElem("longitude", customerList.get(5)))
-                        .append(createStringElem("featureClass", customerList.get(6)))
-                        .append(createStringElem("featureCode", customerList.get(7)))
-                        .append(createStringElem("countryCode", customerList.get(8)))
-                        .append(createStringElem("cc2", customerList.get(9)))
-                        .append(createStringElem("admin1Code", customerList.get(10)))
-                        .append(createStringElem("admin2Code", customerList.get(11)))
-                        .append(createStringElem("admin3Code", customerList.get(12)))
-                        .append(createStringElem("admin4Code", customerList.get(13)))
-                        .append(createStringElem("population", customerList.get(14)))
-                        .append(createStringElem("elevation", customerList.get(15)))
-                        .append(createStringElem("dem", customerList.get(16)))
-                        .append(createStringElem("timezone", customerList.get(17)))
-                        .append(createStringElem("modificationDate", Utils.parseAndFixDate(customerList.get(18).toString())))
-                        .append("</geoname>");
-
-                String query = String.format("xdmp:document-insert(\"/%s.xml\",%s)", customerList.get(0).toString(), sb.toString());
-
-                if (batchCount == 0) {
-                    batch.append(query);
-                } else {
-                    batch.append(",").append(query);
+                // TODO - this is a "hacked" restart setting configured in order to get immediate work done! - this needs to be parameterised or removed ASAP
+                if(customerList.get(0).equals("10232292")){
+                    LOG.info("found target");
+                    startProcessing = true;
                 }
-                batchCount++;
 
-                if (batchCount == TXN_BATCH_SIZE) {
-                    tally += TXN_BATCH_SIZE;
-                    LOG.info(String.format("Batch ready - Size: [ %d ] Last id: [ %s ] total: [ %d ]", TXN_BATCH_SIZE, customerList.get(0), tally));
-                    MarkLogicXCCDataManager.actionTask(batch.toString());
-                    batchCount = 0;
-                    batch = new StringBuilder();
+                if(startProcessing){
+                    StringBuilder sb = new StringBuilder();
+                    sb.append("<geoname>")
+                            .append(createStringElem("geonameid", customerList.get(0)))
+                            .append(createStringElem("name", customerList.get(1)))
+                            .append(createStringElem("asciiname", customerList.get(2)))
+                            .append(createStringElem("alternatenames", customerList.get(3)))
+                            .append(createStringElem("latitude", customerList.get(4)))
+                            .append(createStringElem("longitude", customerList.get(5)))
+                            .append(createStringElem("featureClass", customerList.get(6)))
+                            .append(createStringElem("featureCode", customerList.get(7)))
+                            .append(createStringElem("countryCode", customerList.get(8)))
+                            .append(createStringElem("cc2", customerList.get(9)))
+                            .append(createStringElem("admin1Code", customerList.get(10)))
+                            .append(createStringElem("admin2Code", customerList.get(11)))
+                            .append(createStringElem("admin3Code", customerList.get(12)))
+                            .append(createStringElem("admin4Code", customerList.get(13)))
+                            .append(createStringElem("population", customerList.get(14)))
+                            .append(createStringElem("elevation", customerList.get(15)))
+                            .append(createStringElem("dem", customerList.get(16)))
+                            .append(createStringElem("timezone", customerList.get(17)))
+                            .append(createStringElem("modificationDate", Utils.parseAndFixDate(customerList.get(18).toString())))
+                            .append("</geoname>");
+
+                    String query = String.format("xdmp:document-insert(\"/%s.xml\",%s)", customerList.get(0).toString(), sb.toString());
+
+                    if (batchCount == 0) {
+                        batch.append(query);
+                    } else {
+                        batch.append(",").append(query);
+                    }
+                    batchCount++;
+
+                    if (batchCount == TXN_BATCH_SIZE) {
+                        tally += TXN_BATCH_SIZE;
+                        LOG.info(String.format("Batch ready - Size: [ %d ] Last id: [ %s ] total: [ %d ]", TXN_BATCH_SIZE, customerList.get(0), tally));
+                        MarkLogicXCCDataManager.actionTask(batch.toString());
+                        batchCount = 0;
+                        batch = new StringBuilder();
+                    }
+
                 }
+
             }
         } catch (Exception e) {
             LOG.error(Utils.wrapException(e), e);
