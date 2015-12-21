@@ -104,6 +104,7 @@ public class MarkLogicXCCDataManager {
             } catch (RequestException e) {
                 LOG.error(Utils.wrapException(e), e);
             }
+            s.close();
         }
     }
 }
